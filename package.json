@@ -1,0 +1,25 @@
+{
+  "name": "recorder-autotests-launcher",
+  "version": "1.0.0",
+  "description": "Template project to organize puppeteer scripts exported from Google Chrome Recorder and launch them locally or on remote server",
+  "main": "index.js",
+  "scripts": {
+    "prepare-scripts": "node src/autotests-launcher/scripts-preparer.js",
+    "start-server": "npm run prepare-scripts && node -r dotenv/config src/server/index.js",
+    "launch-tests": "npm run prepare-scripts && node -r dotenv/config src/autotests-launcher/index.js"
+  },
+  "keywords": [
+    "qa",
+    "automation",
+    "testing",
+    "chrome",
+    "recorder"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "puppeteer": "^9.1.1"
+  }
+}
