@@ -13,6 +13,28 @@ function createFolderIfNotExists(folderPath) {
 }
 
 /**
+ * Creates in base directory folders' structure defined in path.
+ * @param {String} baseDirPath - path to folder in which structure will be created. Must exist when calling this function.
+ * @param {String} foldersPath - path which contains folders to build names.
+ * @returns {String} Path to the deepest folder in created structure.
+ */
+function createFoldersStructure(baseDirPath, foldersPath) {
+    if (!fs.existsSync(baseDirPath)) {
+        throw new Error(`Base folder (${baseDirPath}) doesn't exist.`);
+    }
+
+    const foldersToCreate = foldersPath.split(path.sep);
+
+    return foldersToCreate.reduce((parentFolderPath, folderName) => {
+        const folderToCreatePath = path.join(parentFolderPath, folderName);
+
+        createFolderIfNotExists(folderToCreatePath);
+
+        return folderToCreatePath;
+    }, baseDirPath);
+}
+
+/**
  * Recursively gets files paths from folder.
  * @param {string} folderPath - folder's path from which files' paths are received.
  * @returns {string[]}
@@ -33,5 +55,6 @@ function getFolderFilesPaths(folderPath) {
 
 module.exports = {
     createFolderIfNotExists,
+    createFoldersStructure,
     getFolderFilesPaths,
 };

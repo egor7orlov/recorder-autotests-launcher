@@ -3,8 +3,7 @@ const path = require('path');
 const { createFolderIfNotExists } = require('../utils/fs-utils');
 const { preparerStrings } = require('./consts');
 const { autotestsCodeReplacers } = preparerStrings;
-const rawScriptsFolderPath = path.join(__dirname, 'raw-scripts');
-const cleanScriptsFolderPath = path.join(__dirname, 'clean-scripts');
+const { rawScriptsFolderPath, cleanScriptsFolderPath } = require('../utils/consts');
 
 createFolderIfNotExists(rawScriptsFolderPath);
 createFolderIfNotExists(cleanScriptsFolderPath);
@@ -38,7 +37,9 @@ function writeFormattedScripts(pathInRawScripts, pathInCleanScripts) {
             const cleanScriptPath = path.join(pathInCleanScripts, entryName);
             let fileData = fs.readFileSync(rawScriptPath).toString();
 
-            autotestsCodeReplacers.forEach((replacer) => fileData = fileData.replace(replacer.toReplace, replacer.replaceWith));
+            autotestsCodeReplacers.forEach((replacer) => {
+                fileData = fileData.replace(replacer.toReplace, replacer.replaceWith);
+            });
 
             if (!fs.existsSync(cleanScriptPath)) {
                 fs.writeFileSync(cleanScriptPath, fileData.trim(), { encoding: 'utf-8' });

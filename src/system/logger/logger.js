@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { createFolderIfNotExists } = require('../utils/fs-utils');
+const { createFolderIfNotExists, createFoldersStructure } = require('../utils/fs-utils');
+const { logsFolderPath } = require('../utils/consts');
 
 /** Class representing logger */
 class Logger {
@@ -11,7 +12,7 @@ class Logger {
      * @returns {Logger}
      */
     constructor(requester, isSaveLogs) {
-        this.id = requester;
+        this.requester = requester;
         this.isSaveLogs = isSaveLogs;
 
         if (this.isSaveLogs) {
@@ -25,9 +26,8 @@ class Logger {
      * @returns {void}
      */
     _rewriteRequesterFolderForToday() {
-        const logsFolderPath = path.join(__dirname, 'logs');
         const currentDateFolderPath = path.join(logsFolderPath, this._getTodayString());
-        const idFolderPath = path.join(currentDateFolderPath, this.id);
+        const idFolderPath = path.join(currentDateFolderPath, this.requester);
 
         createFolderIfNotExists(logsFolderPath);
         createFolderIfNotExists(currentDateFolderPath);
@@ -43,26 +43,27 @@ class Logger {
 
     /**
      * Writes data into log (file or console).
-     * @param {string} fileName - log file name.
-     * @param {string} text - data to write into log.
+     * @param {string} dirname - where log file will be stored in logs folder structure.
+     * @param {string} filenameWithoutExt - name of a log file.
+     * @param {string} text - text to append to log.
      * @param {string} prefix - prefix of log's line which describes type of message.
      * @returns {Promise<void>}
      */
-    async writeToLog(fileName, text, prefix = 'info') {
-        const data = `[${this.id}][${prefix.toUpperCase()}][${new Date().toLocaleTimeString()}]${text}`;
+    async writeToLog({ dirname, filenameWithoutExt, text, prefix = 'info' }) {
+        const data = `[${this.requester}][${prefix.toUpperCase()}][${new Date().toLocaleTimeString()}]${text}`;
 
         if (!this.isSaveLogs) {
             return console.log(data.trim());
         }
 
-        const fileNameTxtExtension = `${fileName.split('.')[0]}.txt`;
-        const filePath = path.join(this._idFolderPath, fileNameTxtExtension);
+        const folderOfLogFile = createFoldersStructure(this._idFolderPath, dirname);
+        const logFilePath = path.join(folderOfLogFile, filenameWithoutExt + '.txt');
         const options = { encoding: 'utf-8' };
 
-        if (!fs.existsSync(filePath)) {
-            await fs.promises.writeFile(filePath, data, options);
+        if (!fs.existsSync(logFilePath)) {
+            await fs.promises.writeFile(logFilePath, data, options);
         } else {
-            await fs.promises.appendFile(filePath, data, options);
+            await fs.promises.appendFile(logFilePath, data, options);
         }
     }
 

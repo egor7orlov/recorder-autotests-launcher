@@ -8,11 +8,10 @@ const {
     divider,
 } = launcherStrings;
 const { getFolderFilesPaths } = require('../utils/fs-utils');
+const { cleanScriptsFolderPath } = require('../utils/consts');
 
 /** Class representing an autotests launcher */
 class Launcher {
-    _autotestsFolderPath = path.join(__dirname, 'clean-scripts');
-
     /**
      * Creates instance of Launcher class.
      * @param {boolean} isShowBrowser - describes if autotests will be run implicitly or explicitly.
@@ -22,18 +21,20 @@ class Launcher {
     constructor(isShowBrowser, logger) {
         this._isShowBrowser = isShowBrowser;
         this._logger = logger;
+        this._autotestsFolderPath = cleanScriptsFolderPath;
     }
 
     /**
      * @private
      * Returns list of objects containing autotest's filename and function that launches it.
-     * @returns {{name: string, run: VoidFunction}[]}
+     * @returns {{name: string, path: string, run: VoidFunction}[]}
      */
     _getAutotests() {
         const autotestsPaths = getFolderFilesPaths(this._autotestsFolderPath);
 
         return autotestsPaths.map((autotestPath) => ({
             name: path.basename(autotestPath),
+            path: autotestPath,
             run: require(autotestPath),
         }));
     }
@@ -55,7 +56,19 @@ class Launcher {
         for await (const autotest of autotests) {
             const logsDivider = !this._logger.isSaveLogs ? `\n${divider}` : '';
             const writeToLog = async (text, prefix) => {
-                await this._logger.writeToLog(autotest.name, `${text}\n`, prefix);
+                const autotestPathSplitByScriptsFolder = path
+                    .dirname(autotest.path)
+                    .split('clean-scripts' + path.sep);
+                const logFilePlaceInLogs = autotestPathSplitByScriptsFolder.length > 1
+                    ? autotestPathSplitByScriptsFolder[1]
+                    : '';
+
+                await this._logger.writeToLog({
+                    dirname: logFilePlaceInLogs,
+                    filenameWithoutExt: path.basename(autotest.path, '.js'),
+                    text: `${text}\n`,
+                    prefix,
+                });
             };
 
             await writeToLog(getScriptRunningString(autotest.name));

@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const autotestsRouter = express.Router({ caseSensitive: true });
 const {
@@ -10,7 +9,7 @@ const routes = {
     launch: '/launch',
     logs: '/logs',
 };
-const logsPath = path.join(__dirname, '..', '..', 'logger', 'logs');
+const { logsFolderPath } = require('../../utils/consts');
 
 autotestsRouter.get(routes.launch, [
     (req, res, next) => {
@@ -44,6 +43,6 @@ autotestsRouter.post(routes.launch, [
         await runAutotestsAndSendResponse(res, req.body);
     },
 ]);
-autotestsRouter.use(routes.logs, express.static(logsPath));
+autotestsRouter.use(routes.logs, express.static(logsFolderPath));
 
 module.exports = autotestsRouter;

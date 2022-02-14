@@ -6,16 +6,19 @@ const { getAutotestsLaunchArgs } = require('./utils');
 
 /** Class representing workers manager */
 class WorkersManager {
-    _allowedWorkersAmount = Math.ceil(cpus().length / 1.5);
-    _workers = {
-        autoTesters: new Map(),
-    };
-    _requesters = new Set();
-    _workersConfigs = {
-        autotestsWorker: {
-            path: path.join(__dirname, '..', 'autotests-launcher', 'index.js'),
-        },
-    };
+    /** Creates instance of workers manager */
+    constructor() {
+        this._allowedWorkersAmount = Math.ceil(cpus().length / 1.5);
+        this._workers = {
+            autoTesters: new Map(),
+        };
+        this._requesters = new Set();
+        this._workersConfigs = {
+            autotestsWorker: {
+                path: path.join(__dirname, '..', 'autotests-launcher', 'index.js'),
+            },
+        };
+    }
 
     /**
      * Creates and activates worker that runs autotests.
@@ -94,5 +97,4 @@ class WorkersManager {
     }
 }
 
-
-module.exports = new WorkersManager();
+module.exports = WorkersManager;

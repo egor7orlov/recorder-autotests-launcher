@@ -1,0 +1,16 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "env": {
+    "es6": true,
+    "node": true,
+    "commonjs": true,
+    "jest": true
+  },
+  "rules": {
+    "no-ex-assign": "error",
+    "no-loop-func": "error",
+    "require-jsdoc": "warn"
+  }
+}
