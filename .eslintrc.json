@@ -11,6 +11,7 @@
   "rules": {
     "no-ex-assign": "error",
     "no-loop-func": "error",
-    "require-jsdoc": "warn"
+    "require-jsdoc": "warn",
+    "object-shorthand": "warn"
   }
 }
