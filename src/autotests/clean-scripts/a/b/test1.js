@@ -1,4 +1,7 @@
+const {logOneTwoThree} = require('../my-file');
+
 async function run(browser, writeToLog, isExecutedDirectly = false) {
+    logOneTwoThree()
         const page = await browser.newPage();
 
     async function waitForSelectors(selectors, frame) {
@@ -202,7 +205,7 @@ async function run(browser, writeToLog, isExecutedDirectly = false) {
 
     isExecutedDirectly ? await browser.close() : await page.close();
 }
-        
+
 if (require.main === module) {
     (async () => {
         const puppeteer = require('puppeteer');

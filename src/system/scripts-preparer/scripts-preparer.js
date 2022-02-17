@@ -1,13 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { createFolderIfNotExists } = require('../utils/fs-utils');
-const { preparerStrings } = require('./consts');
-const { autotestsCodeReplacers } = preparerStrings;
-const { rawScriptsFolderPath, cleanScriptsFolderPath } = require('../utils/consts');
-
-createFolderIfNotExists(rawScriptsFolderPath);
-createFolderIfNotExists(cleanScriptsFolderPath);
-ScriptsPreparer.writeFormattedScripts(rawScriptsFolderPath, cleanScriptsFolderPath);
+const { autotestsCodeReplacers } = require('./consts');
 
 /** Class representing scripts preparer entity. */
 class ScriptsPreparer {
@@ -48,11 +41,12 @@ class ScriptsPreparer {
 
     /**
      * @private
+     * @static
      * Formats raw script and returns its clean version.
      * @param {string} rawScriptPath - path to raw script.
      * @returns {string}
      */
-    _getCleanScripText(rawScriptPath) {
+    static _getCleanScripText(rawScriptPath) {
         let fileData = fs.readFileSync(rawScriptPath).toString();
 
         autotestsCodeReplacers.forEach((replacer) => {
@@ -62,3 +56,5 @@ class ScriptsPreparer {
         return fileData.trim();
     }
 }
+
+module.exports = ScriptsPreparer;

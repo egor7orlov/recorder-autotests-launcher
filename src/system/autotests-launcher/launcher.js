@@ -1,14 +1,18 @@
+const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const { launcherStrings } = require('./consts');
 const {
     getScriptRunningString,
     getScriptExecutedString,
     getScriptFailedString,
     divider,
-} = launcherStrings;
+} = require('./consts');
 const { getFolderFilesPaths } = require('../utils/fs-utils');
-const { cleanScriptsFolderPath } = require('../utils/consts');
+const {
+    cleanScriptsFolderPath,
+    cleanScriptsFolderName,
+    rawScriptsFolderName,
+} = require('../utils/consts');
 
 /** @typedef {function(string, string): Promise<void>} WriteToLogFunction */
 /** @typedef {function(Browser, WriteToLogFunction): Promise<void>} RunAutotestFunction */
@@ -35,7 +39,9 @@ class Launcher {
      * @returns {Autotest[]}
      */
     _getAutotests() {
-        const autotestsPaths = getFolderFilesPaths(this._autotestsFolderPath);
+        // Launch only those files which appear in raw scripts. Other files are user's modules.
+        const autotestsPaths = getFolderFilesPaths(this._autotestsFolderPath)
+            .filter((autotestPath) => fs.existsSync(autotestPath.replace(cleanScriptsFolderName, rawScriptsFolderName)));
 
         return autotestsPaths.map((autotestPath) => ({
             name: path.basename(autotestPath),

@@ -4,7 +4,7 @@
   "description": "Template project to organize puppeteer scripts exported from Google Chrome Recorder and launch them locally or on remote server",
   "main": "index.js",
   "scripts": {
-    "prepare-scripts": "node src/system/autotests-launcher/scripts-preparer.js",
+    "prepare-scripts": "node src/system/scripts-preparer/index.js",
     "start-server": "npm run prepare-scripts && node -r dotenv/config src/system/server/index.js",
     "launch-tests": "npm run prepare-scripts && node -r dotenv/config src/system/autotests-launcher/index.js"
   },
