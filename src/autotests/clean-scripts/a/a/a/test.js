@@ -1,4 +1,4 @@
-async function run(browser, writeToLog, isExecutedDirectly) {
+async function run(browser, writeToLog, isExecutedDirectly = false) {
         const page = await browser.newPage();
 
     async function waitForSelectors(selectors, frame) {
@@ -162,7 +162,7 @@ async function run(browser, writeToLog, isExecutedDirectly) {
 }
         
 if (require.main === module) {
-    (async ()=>{
+    (async () => {
         const puppeteer = require('puppeteer');
         const browser = await puppeteer.launch({ headless: false });
         const logFunction = (text, prefix) => console.log(`[${prefix.toUpperCase()}]: ${text}`);

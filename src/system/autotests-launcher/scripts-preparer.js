@@ -7,43 +7,58 @@ const { rawScriptsFolderPath, cleanScriptsFolderPath } = require('../utils/const
 
 createFolderIfNotExists(rawScriptsFolderPath);
 createFolderIfNotExists(cleanScriptsFolderPath);
-writeFormattedScripts(rawScriptsFolderPath, cleanScriptsFolderPath);
+ScriptsPreparer.writeFormattedScripts(rawScriptsFolderPath, cleanScriptsFolderPath);
 
-/**
- * Copies autotests structure from raw scripts' folder into clean scripts' folder with formatted scripts.
- * @param {string} pathInRawScripts - path to entry in raw scripts' folder.
- * @param {string} pathInCleanScripts - path to entry in clean scripts' folder.
- * @returns {void}
- */
-function writeFormattedScripts(pathInRawScripts, pathInCleanScripts) {
-    const rawScriptsFolderContent = fs.readdirSync(pathInRawScripts, { withFileTypes: true });
+/** Class representing scripts preparer entity. */
+class ScriptsPreparer {
+    /**
+     * @static
+     * Copies autotests structure from raw scripts' folder into clean scripts' folder with formatted scripts.
+     * @param {string} pathInRawScripts - path to entry in raw scripts' folder.
+     * @param {string} pathInCleanScripts - path to entry in clean scripts' folder.
+     * @returns {void}
+     */
+    static writeFormattedScripts(pathInRawScripts, pathInCleanScripts) {
+        const rawScriptsFolderContent = fs.readdirSync(pathInRawScripts, { withFileTypes: true });
 
-    rawScriptsFolderContent.forEach((directoryEntry) => {
-        const entryName = directoryEntry.name;
+        rawScriptsFolderContent.forEach((directoryEntry) => {
+            const entryName = directoryEntry.name;
 
-        if (directoryEntry.isDirectory()) {
-            const rawDirPath = path.join(pathInRawScripts, entryName);
-            const cleanDirPath = path.join(pathInCleanScripts, entryName);
+            if (directoryEntry.isDirectory()) {
+                const rawDirPath = path.join(pathInRawScripts, entryName);
+                const cleanDirPath = path.join(pathInCleanScripts, entryName);
 
-            if (!fs.existsSync(cleanDirPath)) {
-                fs.mkdirSync(cleanDirPath);
+                if (!fs.existsSync(cleanDirPath)) {
+                    fs.mkdirSync(cleanDirPath);
+                }
+
+                this.writeFormattedScripts(rawDirPath, cleanDirPath);
             }
 
-            writeFormattedScripts(rawDirPath, cleanDirPath);
-        }
+            if (directoryEntry.isFile()) {
+                const rawScriptPath = path.join(pathInRawScripts, entryName);
+                const cleanScriptPath = path.join(pathInCleanScripts, entryName);
 
-        if (directoryEntry.isFile()) {
-            const rawScriptPath = path.join(pathInRawScripts, entryName);
-            const cleanScriptPath = path.join(pathInCleanScripts, entryName);
-            let fileData = fs.readFileSync(rawScriptPath).toString();
-
-            autotestsCodeReplacers.forEach((replacer) => {
-                fileData = fileData.replace(replacer.toReplace, replacer.replaceWith);
-            });
-
-            if (!fs.existsSync(cleanScriptPath)) {
-                fs.writeFileSync(cleanScriptPath, fileData.trim(), { encoding: 'utf-8' });
+                if (!fs.existsSync(cleanScriptPath)) {
+                    fs.writeFileSync(cleanScriptPath, this._getCleanScripText(rawScriptPath), { encoding: 'utf-8' });
+                }
             }
-        }
-    });
+        });
+    }
+
+    /**
+     * @private
+     * Formats raw script and returns its clean version.
+     * @param {string} rawScriptPath - path to raw script.
+     * @returns {string}
+     */
+    _getCleanScripText(rawScriptPath) {
+        let fileData = fs.readFileSync(rawScriptPath).toString();
+
+        autotestsCodeReplacers.forEach((replacer) => {
+            fileData = fileData.replace(replacer.toReplace, replacer.replaceWith);
+        });
+
+        return fileData.trim();
+    }
 }

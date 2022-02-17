@@ -12,6 +12,12 @@
     "no-ex-assign": "error",
     "no-loop-func": "error",
     "require-jsdoc": "warn",
+    "lines-between-class-members": "warn",
+    "no-dupe-class-members": "error",
+    "no-shadow": "error",
     "object-shorthand": "warn"
-  }
+  },
+  "ignorePatterns": [
+    "src/autotests/**/**/*.js"
+  ]
 }

@@ -2,6 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 /**
+ * Creates empty file replacing existent.
+ * @param {string} filePath - file's path.
+ * @returns {void}
+ */
+function createFileReplacingExistent(filePath) {
+    fs.writeFileSync(filePath, '', { encoding: 'utf-8' });
+}
+
+/**
  * Creates folder if it doesn't exist.
  * @param {string} folderPath - folder's path.
  * @returns {void}
@@ -55,6 +64,6 @@ function getFolderFilesPaths(folderPath) {
 
 module.exports = {
     createFolderIfNotExists,
-    createFoldersStructure,
+    createFileReplacingExistent,
     getFolderFilesPaths,
 };

@@ -1,12 +1,15 @@
-async function run(browser, writeToLog, isExecutedDirectly = false) {
-        const page = await browser.newPage();
+const puppeteer = require('puppeteer');
+
+(async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
     async function waitForSelectors(selectors, frame) {
       for (const selector of selectors) {
         try {
           return await waitForSelector(selector, frame);
         } catch (err) {
-          await writeToLog(err.message, 'err');
+          console.error(err);
         }
       }
       throw new Error('Could not find element for selectors: ' + JSON.stringify(selectors));
@@ -200,17 +203,5 @@ async function run(browser, writeToLog, isExecutedDirectly = false) {
         await targetPage.keyboard.up("Control");
     }
 
-    isExecutedDirectly ? await browser.close() : await page.close();
-}
-        
-if (require.main === module) {
-    (async () => {
-        const puppeteer = require('puppeteer');
-        const browser = await puppeteer.launch({ headless: false });
-        const logFunction = (text, prefix) => console.log(`[${prefix.toUpperCase()}]: ${text}`);
-
-        await run(browser, logFunction, true)
-    })();
-}
-
-module.exports = run;
+    await browser.close();
+})();
