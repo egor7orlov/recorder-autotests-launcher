@@ -16,7 +16,6 @@ const {
 
 /** @typedef {function(string, string): Promise<void>} WriteToLogFunction */
 /** @typedef {function(Browser, WriteToLogFunction): Promise<void>} RunAutotestFunction */
-
 /** @typedef {{name: string, path: string, run: RunAutotestFunction}} Autotest */
 
 /** Class representing an autotests launcher */
