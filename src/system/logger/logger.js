@@ -4,7 +4,10 @@ const { createFolderIfNotExists, createFileReplacingExistent } = require('../uti
 const { logsFolderPath } = require('../utils/consts');
 const { getTodayString } = require('../utils/other');
 
-/** Class representing logger */
+/**
+ * Class representing logger
+ * @implements ILogger
+ */
 class Logger {
     /**
      * Creates Logger instance.
